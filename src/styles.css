@@ -1,0 +1,444 @@
+:root {
+  color: #182722;
+  background: #e7e4dc;
+  font-family:
+    Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
+    sans-serif;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  min-width: 320px;
+  min-height: 100vh;
+  margin: 0;
+  background:
+    radial-gradient(circle at 10% 12%, rgb(210 231 219 / 70%), transparent 28rem),
+    linear-gradient(145deg, #f4f1e9 0%, #e2dfd7 100%);
+}
+
+button {
+  font: inherit;
+}
+
+.shell {
+  width: min(1440px, 100%);
+  min-height: 100vh;
+  margin: 0 auto;
+  padding: 32px;
+}
+
+.hero {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 32px;
+  padding: 24px 8px 34px;
+}
+
+.eyebrow {
+  margin: 0 0 8px;
+  color: #3d6f5a;
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+h1,
+h2,
+p {
+  margin-top: 0;
+}
+
+h1 {
+  max-width: 780px;
+  margin-bottom: 14px;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(3rem, 7vw, 6.4rem);
+  font-weight: 500;
+  letter-spacing: -0.065em;
+  line-height: 0.88;
+}
+
+h2 {
+  margin-bottom: 0;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(1.7rem, 3vw, 2.7rem);
+  font-weight: 500;
+  letter-spacing: -0.035em;
+}
+
+.hero-copy {
+  max-width: 680px;
+  margin-bottom: 0;
+  color: #52605b;
+  font-size: 1rem;
+  line-height: 1.65;
+}
+
+.hero-mark {
+  position: relative;
+  width: 130px;
+  height: 92px;
+  flex: 0 0 auto;
+}
+
+.hero-mark::before,
+.hero-mark::after {
+  position: absolute;
+  height: 2px;
+  background: #6b8d7e;
+  content: "";
+  transform-origin: left center;
+}
+
+.hero-mark::before {
+  width: 78px;
+  left: 24px;
+  top: 27px;
+  transform: rotate(31deg);
+}
+
+.hero-mark::after {
+  width: 72px;
+  left: 27px;
+  top: 68px;
+  transform: rotate(-27deg);
+}
+
+.hero-mark span {
+  position: absolute;
+  z-index: 1;
+  width: 34px;
+  height: 34px;
+  border: 5px solid #f4f1e9;
+  border-radius: 50%;
+  background: #315c4b;
+  box-shadow: 0 8px 20px rgb(38 69 57 / 20%);
+}
+
+.hero-mark span:nth-child(1) {
+  left: 4px;
+  top: 10px;
+}
+
+.hero-mark span:nth-child(2) {
+  right: 2px;
+  top: 43px;
+  background: #d37854;
+}
+
+.hero-mark span:nth-child(3) {
+  left: 4px;
+  bottom: 0;
+  background: #e2b94f;
+}
+
+.workspace {
+  display: grid;
+  grid-template-columns: minmax(250px, 0.36fr) minmax(0, 1fr);
+  min-height: 680px;
+  overflow: hidden;
+  border: 1px solid rgb(26 52 42 / 12%);
+  border-radius: 28px;
+  background: rgb(250 248 242 / 88%);
+  box-shadow: 0 28px 80px rgb(47 63 56 / 14%);
+  backdrop-filter: blur(18px);
+}
+
+.library {
+  padding: 30px 22px;
+  border-right: 1px solid rgb(26 52 42 / 10%);
+  background: rgb(234 238 231 / 72%);
+}
+
+.section-heading {
+  padding: 0 8px 24px;
+}
+
+.section-heading h2 {
+  font-size: 1.9rem;
+}
+
+.molecule-list {
+  display: grid;
+  gap: 8px;
+}
+
+.molecule-card {
+  display: grid;
+  grid-template-columns: 52px 1fr auto;
+  align-items: center;
+  gap: 13px;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid transparent;
+  border-radius: 16px;
+  color: #20332c;
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    border-color 160ms ease;
+}
+
+.molecule-card:hover {
+  transform: translateX(3px);
+  border-color: rgb(49 92 75 / 18%);
+  background: rgb(255 255 255 / 58%);
+}
+
+.molecule-card:disabled {
+  cursor: wait;
+}
+
+.molecule-card:focus-visible {
+  outline: 3px solid rgb(61 111 90 / 28%);
+  outline-offset: 2px;
+}
+
+.molecule-card.is-active {
+  border-color: rgb(49 92 75 / 24%);
+  background: #fffdfa;
+  box-shadow: 0 10px 24px rgb(53 74 65 / 10%);
+}
+
+.molecule-card__formula {
+  display: grid;
+  width: 52px;
+  height: 52px;
+  place-items: center;
+  border-radius: 15px;
+  color: #f8f4ec;
+  background: #315c4b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: 1.02rem;
+}
+
+.molecule-card:nth-child(3n + 2) .molecule-card__formula {
+  background: #b96647;
+}
+
+.molecule-card:nth-child(3n) .molecule-card__formula {
+  color: #293831;
+  background: #ddb44d;
+}
+
+.molecule-card__text {
+  display: grid;
+  gap: 3px;
+}
+
+.molecule-card__text strong {
+  font-size: 0.94rem;
+}
+
+.molecule-card__text small {
+  color: #728078;
+  font-size: 0.74rem;
+}
+
+.molecule-card__arrow {
+  color: #8a958f;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: 160ms ease;
+}
+
+.molecule-card.is-active .molecule-card__arrow,
+.molecule-card:hover .molecule-card__arrow {
+  opacity: 1;
+  transform: translateX(0);
+}
+
+.viewer-panel {
+  display: grid;
+  min-width: 0;
+  grid-template-rows: auto minmax(390px, 1fr) auto;
+}
+
+.viewer-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 26px 30px 20px;
+}
+
+.formula {
+  color: #315c4b;
+  font-family: Georgia, "Times New Roman", serif;
+  font-size: clamp(2rem, 4vw, 4rem);
+  letter-spacing: -0.04em;
+}
+
+.viewer-stage {
+  position: relative;
+  min-height: 390px;
+  margin: 0 30px;
+  overflow: hidden;
+  border: 1px solid rgb(26 52 42 / 10%);
+  border-radius: 22px;
+  background: #f5f3ee;
+}
+
+#molecule-viewer,
+#molecule-viewer > div {
+  position: absolute;
+  inset: 0;
+}
+
+.viewer-status {
+  position: absolute;
+  top: 18px;
+  left: 18px;
+  z-index: 20;
+  padding: 8px 12px;
+  border-radius: 999px;
+  color: #355044;
+  background: rgb(255 253 250 / 88%);
+  font-size: 0.75rem;
+  font-weight: 750;
+  box-shadow: 0 8px 20px rgb(42 63 54 / 12%);
+  transition: opacity 180ms ease;
+}
+
+.viewer-status.is-hidden {
+  pointer-events: none;
+  opacity: 0;
+}
+
+.viewer-status.is-error {
+  color: #842f23;
+  background: #fff0ec;
+}
+
+.viewer-hint {
+  position: absolute;
+  right: 14px;
+  bottom: 14px;
+  z-index: 20;
+  padding: 7px 11px;
+  border-radius: 10px;
+  color: #596b62;
+  background: rgb(255 253 250 / 78%);
+  font-size: 0.7rem;
+  backdrop-filter: blur(10px);
+}
+
+.details {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.75fr) minmax(420px, 1.25fr);
+  gap: 34px;
+  padding: 24px 30px 30px;
+}
+
+.description {
+  margin-bottom: 0;
+  color: #52605b;
+  font-size: 0.94rem;
+  line-height: 1.65;
+}
+
+.fact-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px 28px;
+  margin: 0;
+}
+
+.fact-grid div {
+  min-width: 0;
+}
+
+.fact-grid dt {
+  margin-bottom: 4px;
+  color: #839087;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.fact-grid dd {
+  margin: 0;
+  color: #25382f;
+  font-size: 0.88rem;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+@media (max-width: 900px) {
+  .shell {
+    padding: 18px;
+  }
+
+  .hero-mark {
+    display: none;
+  }
+
+  .workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .library {
+    border-right: 0;
+    border-bottom: 1px solid rgb(26 52 42 / 10%);
+  }
+
+  .molecule-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .details {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 590px) {
+  .shell {
+    padding: 0;
+  }
+
+  .hero {
+    padding: 30px 22px;
+  }
+
+  .workspace {
+    border-right: 0;
+    border-left: 0;
+    border-radius: 0;
+  }
+
+  .molecule-list {
+    grid-template-columns: 1fr;
+  }
+
+  .viewer-toolbar {
+    padding: 22px 20px 16px;
+  }
+
+  .viewer-stage {
+    min-height: 420px;
+    margin: 0 14px;
+  }
+
+  .viewer-hint {
+    display: none;
+  }
+
+  .details {
+    padding: 22px 20px 28px;
+  }
+
+  .fact-grid {
+    grid-template-columns: 1fr;
+  }
+}
