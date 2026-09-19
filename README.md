@@ -1,6 +1,45 @@
 # Molecule Playground
 
-A small 3Dmol.js-powered starter app for exploring common molecules in 3D.
+A small 3Dmol.js-powered app for exploring common molecules in 3D. The local
+Explorer searches the six-molecule collection by name or formula and displays
+properties, everyday uses, and PubChem source links.
+
+The project now also includes a separate Molecule Builder prototype at
+`/builder.html`. The prototype keeps the builder separate from the search-based
+explorer and demonstrates the planned workflow: choose an element, place atoms
+on a 2D canvas, connect them within simple valence limits, and preview the
+structure in a rotatable preview. This prototype exports flat drawing
+coordinates; it does not calculate molecular geometry yet. Its formula assumes
+implicit hydrogens, while the preview displays only the explicitly drawn atoms.
+Full chemistry validation and geometry generation are planned for the next stage.
+
+## Agreed direction
+
+- Four planned pages: Home, Molecule Explorer, Molecule Builder, and Reaction Lab.
+- Use Wix Site 1 as the website shell.
+- Keep 3Dmol.js for displaying 3D structures.
+- Next Builder milestone: integrate Ketcher for chemical drawing and a Python
+  RDKit service for supported structure checks and 3D coordinate generation.
+- MolView integration is excluded from the plan (Ryan's decision, 2026-09-19).
+- Start Reaction Lab with a small reviewed reaction library, after the Builder
+  drawing-to-3D workflow works.
+
+Ketcher and RDKit are planned; they are not installed in this baseline.
+The latest local Explorer has not yet replaced the Wix Site 1 draft embed.
+The preserved Wix embed is in
+`history/snapshots/wix-site-1-explorer-2026-09-18.html`.
+
+## Checks
+
+```bash
+node --test tests/baseline.test.mjs
+pnpm build
+```
+
+The baseline suite checks molecule file identities, formulas, bonds, data fields,
+and search behavior. Builder picker and bond styling tests are source checks,
+not a substitute for browser interaction testing. See `history/project-progress.md`
+for completed work and remaining checks.
 
 ## Included molecules
 
@@ -22,7 +61,8 @@ pnpm install
 pnpm dev
 ```
 
-Then open `http://127.0.0.1:5173/` in a browser. Do not open `index.html`
+Then open `http://127.0.0.1:5173/` in a browser. The builder prototype is at
+`http://127.0.0.1:5173/builder.html`. Do not open `index.html`
 directly from Finder: 3Dmol.js and the bundled molecule files must be served over
 HTTP for browser module loading to work.
 
