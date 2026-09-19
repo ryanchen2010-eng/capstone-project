@@ -1,5 +1,5 @@
 import './styles.css';
-import { molecules, type Molecule } from './molecules';
+import { findMolecules, molecules, normalizeQuery, type Molecule } from './molecules';
 
 type Viewer = {
   removeAllModels: () => void;
@@ -42,14 +42,23 @@ app.innerHTML = `
       <div class="hero-mark" aria-hidden="true">
         <span></span><span></span><span></span>
       </div>
+      <a class="builder-link" href="/builder.html">Build a molecule →</a>
     </header>
 
     <section class="workspace" aria-label="Interactive molecule explorer">
       <aside class="library">
         <div class="section-heading">
           <p class="eyebrow">Starter collection</p>
-          <h2>Common molecules</h2>
+          <h2>Find a molecule</h2>
         </div>
+        <form id="molecule-search-form" class="molecule-search" role="search">
+          <label for="molecule-search">Search by name or formula</label>
+          <div class="molecule-search__controls">
+            <input id="molecule-search" type="search" placeholder="Water, caffeine, H₂O…" autocomplete="off" />
+            <button type="submit">Search</button>
+          </div>
+          <p id="search-status" role="status">Six molecules in the starter collection.</p>
+        </form>
         <div id="molecule-list" class="molecule-list"></div>
       </aside>
 
@@ -80,6 +89,9 @@ app.innerHTML = `
 `;
 
 const moleculeList = mustElement<HTMLDivElement>('#molecule-list');
+const searchForm = mustElement<HTMLFormElement>('#molecule-search-form');
+const searchInput = mustElement<HTMLInputElement>('#molecule-search');
+const searchStatus = mustElement<HTMLParagraphElement>('#search-status');
 const moleculeTitle = mustElement<HTMLHeadingElement>('#molecule-title');
 const category = mustElement<HTMLParagraphElement>('#category');
 const formula = mustElement<HTMLDivElement>('#formula');
@@ -89,7 +101,10 @@ const viewerStatus = mustElement<HTMLDivElement>('#viewer-status');
 
 const buttons = new Map<string, HTMLButtonElement>();
 
-for (const molecule of molecules) {
+function renderMoleculeCards(items: Molecule[]) {
+  moleculeList.replaceChildren();
+  buttons.clear();
+  for (const molecule of items) {
   const button = document.createElement('button');
   button.className = 'molecule-card';
   button.type = 'button';
@@ -104,7 +119,16 @@ for (const molecule of molecules) {
   `;
   moleculeList.append(button);
   buttons.set(molecule.id, button);
+  }
+  if (!items.length) {
+    const empty = document.createElement('p');
+    empty.className = 'molecule-list__empty';
+    empty.textContent = 'No molecule found. Try a name or formula from the collection.';
+    moleculeList.append(empty);
+  }
 }
+
+renderMoleculeCards(molecules);
 
 const viewerHost = mustElement<HTMLDivElement>('#molecule-viewer');
 const viewerFactory = window.$3Dmol;
@@ -116,11 +140,13 @@ const viewer = viewerFactory.createViewer(viewerHost, {
 
 let activeMoleculeId = '';
 let loadSequence = 0;
+let modelReady = false;
 
 async function showMolecule(molecule: Molecule) {
-  if (activeMoleculeId === molecule.id) return;
+  if (activeMoleculeId === molecule.id && modelReady) return;
 
   activeMoleculeId = molecule.id;
+  modelReady = false;
   const sequence = ++loadSequence;
 
   for (const [id, button] of buttons) {
@@ -135,33 +161,62 @@ async function showMolecule(molecule: Molecule) {
   formula.textContent = molecule.formula;
   description.textContent = molecule.description;
   factGrid.replaceChildren(
-    ...molecule.facts.flatMap((fact) => {
+    ...[
+      ['Molecular formula', molecule.formula],
+      ['Molar mass', molecule.properties.mass],
+      ['Geometry', molecule.properties.geometry],
+      ['Polarity', molecule.properties.polarity],
+      ['Bond types', molecule.properties.bonds],
+      ['Melting point', molecule.properties.melting],
+      ['Boiling / phase behaviour', molecule.properties.boiling],
+    ].map(([label, value]) => {
       const wrapper = document.createElement('div');
       const term = document.createElement('dt');
       const detail = document.createElement('dd');
-      term.textContent = fact.label;
-      detail.textContent = fact.value;
+      term.textContent = label;
+      detail.textContent = value;
       wrapper.append(term, detail);
-      return [wrapper];
+      return wrapper;
     }),
   );
+  const source = document.createElement('a');
+  source.href = `https://pubchem.ncbi.nlm.nih.gov/compound/${molecule.cid}`;
+  source.target = '_blank';
+  source.rel = 'noopener noreferrer';
+  source.textContent = `PubChem · CID ${molecule.cid}`;
+  const sourceWrapper = document.createElement('div');
+  const sourceTerm = document.createElement('dt');
+  const sourceDetail = document.createElement('dd');
+  sourceTerm.textContent = 'Structure source';
+  sourceDetail.append(source);
+  sourceWrapper.append(sourceTerm, sourceDetail);
+  sourceWrapper.className = 'fact-source';
+  factGrid.append(sourceWrapper);
+  const everyday = document.createElement('div');
+  everyday.className = 'fact-everyday';
+  everyday.textContent = `Everyday life: ${molecule.properties.everyday}`;
+  factGrid.append(everyday);
 
   viewerStatus.textContent = `Loading ${molecule.name}…`;
   viewerStatus.classList.remove('is-hidden', 'is-error');
 
   try {
+    viewer.removeAllModels();
+    viewer.render();
     const response = await fetch(molecule.structureFile);
     if (!response.ok) throw new Error(`Could not fetch ${molecule.structureFile}`);
     const structure = await response.text();
 
-    viewer.removeAllModels();
+    if (sequence !== loadSequence) return;
+
     viewer.removeAllSurfaces();
     viewer.removeAllLabels();
     viewer.removeAllShapes();
     viewer.addModel(structure, 'sdf');
-    viewer.setStyle({}, { stick: { colorscheme: 'Jmol' }, sphere: { scale: 0.25 } });
+    viewer.setStyle({}, { stick: { colorscheme: 'Jmol', radius: 0.1 }, sphere: { scale: 0.25 } });
     viewer.zoomTo();
     viewer.render();
+    modelReady = true;
 
     if (sequence === loadSequence) {
       viewerStatus.textContent = `${molecule.name} ready`;
@@ -172,6 +227,7 @@ async function showMolecule(molecule: Molecule) {
   } catch (error) {
     console.error(error);
     if (sequence === loadSequence) {
+      modelReady = false;
       viewerStatus.textContent = `Could not load ${molecule.name}.`;
       viewerStatus.classList.add('is-error');
     }
@@ -190,6 +246,24 @@ moleculeList.addEventListener('click', (event) => {
 
   const molecule = molecules.find((item) => item.id === target.dataset.moleculeId);
   if (molecule) void showMolecule(molecule);
+});
+
+searchForm.addEventListener('submit', (event) => {
+  event.preventDefault();
+  const found = findMolecules(searchInput.value);
+  renderMoleculeCards(found);
+  searchStatus.textContent = found.length
+    ? `${found.length} match${found.length === 1 ? '' : 'es'} found.`
+    : 'No match in the starter collection.';
+  const exact = found.filter((molecule) => [molecule.name, molecule.formula, molecule.id].some((value) => normalizeQuery(value) === normalizeQuery(searchInput.value)));
+  if (exact.length === 1) void showMolecule(exact[0]);
+});
+
+searchInput.addEventListener('input', () => {
+  if (!searchInput.value.trim()) {
+    renderMoleculeCards(molecules);
+    searchStatus.textContent = 'Six molecules in the starter collection.';
+  }
 });
 
 await showMolecule(molecules[0]);
