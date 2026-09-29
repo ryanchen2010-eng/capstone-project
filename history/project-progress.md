@@ -337,3 +337,11 @@ yet been updated with these local changes.
   a stable size. Stacked the Explorer header navigation on narrower screens.
 - Browser-checked desktop and mobile layouts and scrolling through the full
   compound list. The production build passed; the fix remains local.
+
+## 2026-09-29 — GitHub backup
+
+- Uploaded the current website source to Ryan's `ryanchen2010-eng/capstone-project`
+  repository on branch `codex/capstone-site-2026-09-29`.
+- Opened draft pull request #1 for review. The repository is public, but the
+  website is still an unfinished local prototype: the pull request was not
+  merged, and nothing was published to Wix.
