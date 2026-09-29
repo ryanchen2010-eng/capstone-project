@@ -5,11 +5,22 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:chemistry": ".venv/bin/python server/chemistry_server.py",
     "build": "tsc && vite build",
     "preview": "vite preview"
   },
   "devDependencies": {
+    "@types/react": "^18.3.31",
+    "@types/react-dom": "^18.3.7",
     "typescript": "^5.9.0",
     "vite": "^7.0.0"
+  },
+  "dependencies": {
+    "events": "^3.3.0",
+    "ketcher-core": "^3.18.0",
+    "ketcher-react": "^3.18.0",
+    "ketcher-standalone": "^3.18.0",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1"
   }
 }
